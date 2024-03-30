@@ -1,0 +1,170 @@
+<template name="cisco_asa_show_running_config" results="per_template">
+<doc>
+Template to parse Cisco ASA configuration and produce data structure that
+is easy to work with to import data into NetBox.
+
+This template requires output from "show running-config" command on Cisco ASA.
+</doc>
+
+<input>
+commands = ["show running-config"]
+</input>
+
+<vars>
+ACL_ACTION = "permit|deny"
+ACL_ANY = "any"
+ACL_SVC = "tcp|udp|icmp|ip"
+OBJECT_EXCLUDE = "[A-Za-z]"
+RE_IPV4 = "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+SVC_PORTS = "tcp-udp|tcp|udp"
+</vars>
+
+<macro>
+def add_interface_type(data):
+    data['type'] = 'other'
+    if any(i in data['name'].lower() for i in ['.', 'loopback', 'tunnel']):
+        data['type'] = 'virtual'
+    elif any(i in data['name'].lower() for i in ['vlan', 'nve']):
+        data['type'] = 'bridge'
+    elif 'port-channel' in data['name'].lower():
+        data['type'] = 'lag'
+
+    return data
+
+def add_parent_interface(data):
+    if "lag_id" in data:
+        data['parent'] = f"Port-channel{data['lag_id']}"
+    elif "." in data['name']:
+        data['parent'] = data['name'].split(".")[0]
+
+    return data
+
+def merge_mtu(data, mtu):
+    for interface in data.get("interfaces", []):
+        if label := interface.get("label"):
+            interface['mtu'] = mtu[label]['mtu']
+    return data
+
+def postprocess(data):
+    if mtu := data.get("mtu", []):
+        data = merge_mtu(data, mtu)
+        del data['mtu']
+    return data
+
+</macro>
+
+## -----------------------------------------------------------------------
+## Global Configuration facts
+## -----------------------------------------------------------------------
+<group name="facts**" method="table">
+: Serial Number: {{ serial_number }}
+ASA Version {{ os_version }}
+hostname {{ hostname }}
+domain-name {{ domain_name }}
+boot system {{ boot_image }}
+asdm image {{ asdm_image }}
+</group>
+
+## -----------------------------------------------------------------------
+## Interface Configuration
+## -----------------------------------------------------------------------
+<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface')">
+interface {{ name | _start_ }}
+ description {{ description | re(".*") | default("") }}
+ shutdown {{ enabled | set(False) | default(True) }}
+ nameif {{ label }}
+ no nameif {{ label | default("") }}
+ security-level {{ security_level | to_int }}
+ no security-level {{ security_level | default(None) }}
+ channel-group {{ lag_id | to_int }} mode {{ lacp_mode }}
+ lacp max-bundle {{ lacp_max_bundle }}
+ vlan {{ vlan_id | to_int }}
+
+ <group name="ipv4*" method="table">
+ ip address {{ ip | IP }} {{ mask }}
+ ip address {{ ip | IP | let("secondary", True) }} {{ mask }} secondary
+ </group>
+
+{{ _end_ }}
+</group>
+
+## -----------------------------------------------------------------------
+## Object Configuration
+## -----------------------------------------------------------------------
+<group name="objects">
+
+<group name="{{ object_type }}_objects.{{ object_name }}**">
+object {{ object_type }} {{ object_name | _start_ }}
+ description {{ description | re(".*") | default("") }}
+ service {{ protocol | re("SVC_PORTS") }} destination eq {{ port | to_int }}
+ service {{ protocol | re("SVC_PORTS") }} destination range {{ port_begin | to_int }} {{ port_end | to_int }}
+ range {{ begin_ip | IP }} {{ end_ip | IP }}
+ fqdn v4 {{ fqdn | re(".*") }}
+ host {{ ip | IP }}
+ host {{ host | WORD }}
+ subnet {{ ip | PHRASE | contains_re('RE_IPV4') | exclude_re('OBJECT_EXCLUCDE') | to_ip | with_prefixlen }}
+ <group name="nat_rule**" method="table">
+ nat ({{ source_interface }},{{ destination_interface }}) {{ type }} {{ interface | IP }} service {{ protocol | re("SVC_PORTS") }} {{ source_port | to_int }} {{ destination_port | to_int }}
+ </group>
+
+{{ _end_ }}
+</group>
+
+</group>
+
+## -----------------------------------------------------------------------
+## Access-List Configuration
+## -----------------------------------------------------------------------
+<group name="access_lists">
+
+<group name="standard.{{ acl_name }}*" method="table">
+access-list {{ acl_name }} standard {{ action | re("ACL_ACTION") }} {{ prefix_ip | IP }} {{ prefix_mask }}
+</group>
+
+<group name="extended.{{ acl_name }}*" method="table">
+access-list {{ acl_name }} extended remark {{ ignore }}
+
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object | re("ACL_ANY") }} {{ dst_object | re("ACL_ANY") }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object | re("ACL_ANY") }} {{ dst_object | re("ACL_ANY") }} eq {{ dst_service }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object | PHRASE | contains_re('RE_IPV4') | exclude_re('OBJECT_EXCLUDE') | to_ip | with_prefixlen }} {{ dst_object | re("ACL_ANY") }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object | re("ACL_ANY") }} {{ dst_object | PHRASE | contains_re('RE_IPV4') | exclude_re('OBJECT_EXCLUDE') | to_ip | with_prefixlen }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} host {{ src_object }} {{ dst_object | re("ACL_ANY") }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object | re("ACL_ANY") }} host {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object }} {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} host {{ src_object }} {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object }} host {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object }} {{ src_object_mask }} host {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} {{ src_object }} {{ src_object_mask }} host {{ dst_object }} eq {{ port }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} host {{ src_object }} host {{ dst_object }}
+access-list {{ acl_name }} extended {{ action | re("ACL_ACTION") }} {{ service | re("ACL_SVC") }} host {{ src_object }} host {{ dst_object }} eq {{ port }}
+
+## Catch-all for all entries that don't match
+access-list {{ acl_name }} extended {{ remaining_config | _line_ | joinmatches | exclude('inactive')}}
+</group>
+
+</group>
+
+## -----------------------------------------------------------------------
+## Access-Group Configuration
+## -----------------------------------------------------------------------
+<group name="access_groups">
+access-group {{ acl_name }} {{ direction }} interface {{ interface }}
+</group>
+
+## -----------------------------------------------------------------------
+## Route Configuration
+## -----------------------------------------------------------------------
+<group name="routes*" method="table">
+route {{ interface }} {{ network | IP }} {{ mask }} {{ gateway | IP }} {{ metric | to_int }}
+</group>
+
+## -----------------------------------------------------------------------
+## MTU Configuration
+## -----------------------------------------------------------------------
+<group name="mtu.{{ interface }}" method="table">
+mtu {{ interface }} {{ mtu | to_int }}
+</group>
+
+<output name="postprocess" macro="postprocess"/>
+
+</template>
