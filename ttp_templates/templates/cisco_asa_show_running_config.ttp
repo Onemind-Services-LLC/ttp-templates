@@ -46,7 +46,9 @@ def merge_mtu(data, mtu):
     return data
 
 def postprocess(data):
-    data = merge_mtu(data, data.get("mtu", []))
+    if mtu := data.get("mtu", []):
+        data = merge_mtu(data, mtu)
+        del data['mtu']
     return data
 
 </macro>
