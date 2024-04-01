@@ -13,9 +13,9 @@ commands = ["show running-config"]
 <macro>
 def add_interface_type(data):
     data['type'] = 'other'
-    if any(i in data['name'].lower() for i in ['.', 'loopback', 'tunnel']):
+    if any(i in data['name'].lower() for i in ['.', 'loopback', 'tunnel', 'vlan']):
         data['type'] = 'virtual'
-    elif any(i in data['name'].lower() for i in ['vlan', 'nve']):
+    elif 'nve' in data['name'].lower():
         data['type'] = 'bridge'
     elif 'port-channel' in data['name'].lower():
         data['type'] = 'lag'
