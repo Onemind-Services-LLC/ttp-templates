@@ -1,1 +1,2 @@
 ttp[full]==0.9.5
+netutils==1.7.0

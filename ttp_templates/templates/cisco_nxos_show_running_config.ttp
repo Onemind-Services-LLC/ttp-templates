@@ -1,0 +1,100 @@
+<template name="cisco_nxos_show_running_config" results="per_template">
+<doc>
+Template to parse Cisco NXOS configuration and produce data structure that
+is easy to work with to import data into NetBox.
+
+This template requires output from "show running-config" command on Cisco ASA.
+</doc>
+
+<input>
+commands = ["show running-config"]
+</input>
+
+<macro>
+def add_interface_type(data):
+    data['type'] = 'other'
+    if any(i in data['name'].lower() for i in ['.', 'loopback', 'tunnel']):
+        data['type'] = 'virtual'
+    elif any(i in data['name'].lower() for i in ['vlan', 'nve']):
+        data['type'] = 'bridge'
+    elif 'port-channel' in data['name'].lower():
+        data['type'] = 'lag'
+
+    return data
+
+def add_parent_interface(data):
+    if "lag_id" in data:
+        data['parent'] = f"Port-channel{data['lag_id']}"
+    elif "." in data['name']:
+        data['parent'] = data['name'].split(".")[0]
+
+    return data
+
+def postprocess(data):
+    from netutils.vlan import vlanconfig_to_list
+
+    vlans = data.get('vlans', [])
+    named_vlans = []
+    unnamed_vlans = []
+
+    for entry in vlans:
+        vlan_ids = vlanconfig_to_list(entry['vlan_id'])
+        if "name" in entry:
+            for vlan_id in vlan_ids:
+                named_vlans.append({"vlan_id": vlan_id, "name": entry["name"]})
+        else:
+            unnamed_vlans.extend(vlan_ids)
+
+    for vlan in named_vlans:
+        unnamed_vlans.remove(vlan['vlan_id'])
+
+    for vlan in unnamed_vlans:
+        named_vlans.append({"vlan_id": vlan, "name": None})
+
+    data['vlans'] = sorted(named_vlans, key=lambda x: x['vlan_id'])
+    return data
+
+</macro>
+
+## -----------------------------------------------------------
+## Global configuration facts
+## -----------------------------------------------------------
+<group name="facts**" method="table">
+version {{ os_version }}
+hostname {{ hostname }}
+</group>
+
+## -----------------------------------------------------------
+## VLANs
+## -----------------------------------------------------------
+<group name="vlans*">
+vlan {{ vlan_id }}
+  name {{ name | ORPHRASE }}
+</group>
+
+## -----------------------------------------------------------
+## Interface configuration
+## -----------------------------------------------------------
+<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface')">
+interface {{ name | _start_ }}
+  description {{ description | re(".*") | default("") }}
+  no shutdown {{ enabled | set(True) | default(False) }}
+  shutdown {{ enabled | set(False) }}
+  management {{ management | set(True) }}
+  switchport mode trunk {{ mode | set("tagged_all") }}
+  switchport access vlan {{ access_vlan | let("mode", "access") }}
+  switchport trunk native vlan {{ tagged_vlan | let("mode", "tagged") }}
+  switchport trunk allowed vlan {{ untagged_vlans | unrange(rangechar='-', joinchar=',') | split(",") | joinmatches | let("mode", "tagged") }}
+  channel-group {{ lag_id }} mode {{ lacp_mode }}
+
+  <group name="ipv4*" method="table">
+  ip address {{ ip }}
+  ip address {{ ip | let("secondary", True) }} secondary
+  </group>
+
+{{ _end_ }}
+</group>
+
+<output name="postprocess" macro="postprocess"/>
+
+</template>
