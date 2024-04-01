@@ -86,7 +86,7 @@ interface {{ name | _start_ }}
   no shutdown {{ enabled | set(True) | default(False) }}
   shutdown {{ enabled | set(False) }}
   management {{ management | set(True) }}
-  switchport mode trunk {{ mode | set("tagged_all") }}
+  switchport mode trunk {{ mode | set("tagged-all") }}
   switchport access vlan {{ access_vlan | let("mode", "access") }}
   switchport trunk native vlan {{ access_vlan | let("mode", "access") }}
   switchport trunk allowed vlan {{ tagged_vlans | unrange(rangechar='-', joinchar=',') | split(",") | joinmatches | let("mode", "tagged") }}
