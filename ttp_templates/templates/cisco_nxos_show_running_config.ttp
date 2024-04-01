@@ -89,7 +89,7 @@ interface {{ name | _start_ }}
   switchport mode trunk {{ mode | set("tagged_all") }}
   switchport access vlan {{ access_vlan | let("mode", "access") }}
   switchport trunk native vlan {{ access_vlan | let("mode", "access") }}
-  switchport trunk allowed vlan {{ untagged_vlans | unrange(rangechar='-', joinchar=',') | split(",") | joinmatches | let("mode", "tagged") }}
+  switchport trunk allowed vlan {{ tagged_vlans | unrange(rangechar='-', joinchar=',') | split(",") | joinmatches | let("mode", "tagged") }}
   channel-group {{ lag_id }} mode {{ lacp_mode }}
 
   <group name="ipv4*" method="table">
