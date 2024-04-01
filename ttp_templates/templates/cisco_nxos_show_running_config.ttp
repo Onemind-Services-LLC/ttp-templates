@@ -30,6 +30,11 @@ def add_parent_interface(data):
 
     return data
 
+def fix_port_channel_name(data):
+    if "port-channel" in data['name']:
+        data['name'] = data['name'].replace("port-channel", "Port-channel")
+    return data
+
 def postprocess(data):
     from netutils.vlan import vlanconfig_to_list
 
@@ -75,7 +80,7 @@ vlan {{ vlan_id }}
 ## -----------------------------------------------------------
 ## Interface configuration
 ## -----------------------------------------------------------
-<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface')">
+<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface') | macro('fix_port_channel_name')">
 interface {{ name | _start_ }}
   description {{ description | re(".*") | default("") }}
   no shutdown {{ enabled | set(True) | default(False) }}

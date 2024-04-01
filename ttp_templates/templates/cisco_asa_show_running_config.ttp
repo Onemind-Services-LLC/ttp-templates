@@ -45,6 +45,11 @@ def merge_mtu(data, mtu):
             interface['mtu'] = mtu[label]['mtu']
     return data
 
+def fix_port_channel_name(data):
+    if "port-channel" in data['name']:
+        data['name'] = data['name'].replace("port-channel", "Port-channel")
+    return data
+
 def postprocess(data):
     if mtu := data.get("mtu", []):
         data = merge_mtu(data, mtu)
@@ -68,7 +73,7 @@ asdm image {{ asdm_image }}
 ## -----------------------------------------------------------------------
 ## Interface Configuration
 ## -----------------------------------------------------------------------
-<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface')">
+<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface') | macro('fix_port_channel_name')">
 interface {{ name | _start_ }}
  description {{ description | re(".*") | default("") }}
  shutdown {{ enabled | set(False) | default(True) }}
