@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pre_commit:
+    name: Run lint rules
+    runs-on: cypress
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4.7.0
+        with:
+          python-version: '3.10'
+
+      - uses: pre-commit/action@v3.0.0
+
+  test:
+    name: Run tests
+    runs-on: cypress
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4.7.0
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install pydantic
+
+      - name: Run tests
+        run: python -m unittest

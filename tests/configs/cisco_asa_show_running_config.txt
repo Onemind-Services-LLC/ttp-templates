@@ -1,0 +1,138 @@
+: Saved
+
+:
+: Serial Number: SN001
+: Hardware:   ASA5585-SSP-20, 7891 MB RAM, CPU Xeon 5500 series 2133 MHz, 1 CPU (8 cores)
+:
+ASA Version 9.12(4)
+!
+hostname ASA5585X
+domain-name example.local
+!
+!
+interface GigabitEthernet0/0
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/1
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/2
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/3
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/4
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/5
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/6
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/7
+ duplex full
+ channel-group 1 mode active
+ no nameif
+ no security-level
+ no ip address
+!
+interface Management0/0
+ no management-only
+ nameif management
+ security-level 100
+ ip address 10.10.10.1 255.255.255.0
+ ip address 20.20.20.1 255.255.255.0 secondary
+!
+interface Management0/1
+ no management-only
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface TenGigabitEthernet0/8
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface TenGigabitEthernet0/9
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface Port-channel1
+ description LACP1
+ lacp max-bundle 8
+ no nameif
+ no security-level
+ no ip address
+!
+interface Port-channel1.100
+ vlan 100
+ no nameif
+ no security-level
+ no ip address
+!
+object network obj_net_1
+ description Sample network object
+ host 192.168.1.1
+!
+object service obj_svc_1
+ service tcp destination eq 80
+!
+object range obj_range_1
+ range 10.0.0.1 10.0.0.254
+!
+object fqdn obj_fqdn_1
+ fqdn v4 www.example.com
+!
+object subnet obj_subnet_1
+ subnet 192.168.0.0 255.255.255.0
+!
+access-list VTY_ADMINS standard permit 10.10.10.0 255.255.255.0
+!
+mtu management 1500
+no monitor-interface outside
+!
+asdm image disk0:/asdm-7131-101.bin
+!
+object network obj_net_1
+ nat (any,outside) static 100.100.100.10 service tcp 80 80
+!
+access-group ACL-OUT out interface outside
+route outside 0.0.0.0 0.0.0.0 100.100.10.10 1
+route management 10.10.10.0 255.255.255.0 10.10.20.0 10
+!
+boot system disk0:/asa9-12-4-smp-k8.bin
