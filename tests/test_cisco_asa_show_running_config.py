@@ -315,7 +315,7 @@ class TestCiscoASA(TestCase):
                 "acl_name": "ACL-OUT",
                 "direction": "out",
                 "interface": "outside",
-            }
+            },
         )
 
     def test_routes(self):
@@ -335,6 +335,6 @@ class TestCiscoASA(TestCase):
                     "mask": "255.255.255.0",
                     "gateway": "10.10.20.0",
                     "metric": 10,
-                }
-            ]
+                },
+            ],
         )
