@@ -51,9 +51,18 @@ def fix_port_channel_name(data):
     return data
 
 def postprocess(data):
+    from netutils.ip import netmask_to_cidr
+
     if mtu := data.get("mtu", []):
         data = merge_mtu(data, mtu)
         del data['mtu']
+
+    if interfaces := data.get("interfaces", []):
+        for interface in interfaces:
+            for ipv4 in interface.get("ipv4", []):
+                ipv4["ip"] = f'{ipv4["ip"]}/{netmask_to_cidr(ipv4["mask"])}'
+                del ipv4["mask"]
+
     return data
 
 </macro>

@@ -8,6 +8,7 @@ __all__ = [
     "DeviceAclStandard",
     "DeviceFacts",
     "DeviceInterface",
+    "DeviceVlan",
     "IPv4",
 ]
 
@@ -26,7 +27,6 @@ class ASAFacts(DeviceFacts):
 
 class IPv4(BaseModel):
     ip: str
-    mask: str
     secondary: Optional[bool] = False
 
 
@@ -44,6 +44,11 @@ class DeviceInterface(BaseModel):
     ipv4: Optional[list[dict]] = None
     parent: Optional[str] = ""
     mtu: Optional[int] = None
+    management: Optional[bool] = False
+    mode: Literal["", "access", "tagged", "tagged-all"] = ""
+    access_vlan: Optional[int] = None
+    tagged_vlans: Optional[list[int]] = None
+    speed: Optional[int] = None
 
 
 class ASAInterface(DeviceInterface):
@@ -54,3 +59,8 @@ class DeviceAclStandard(BaseModel):
     action: Literal["permit", "deny"]
     prefix_ip: str
     prefix_mask: str
+
+
+class DeviceVlan(BaseModel):
+    vlan_id: int
+    name: Optional[str] = None

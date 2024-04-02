@@ -36,6 +36,7 @@ def fix_port_channel_name(data):
     return data
 
 def postprocess(data):
+    from netutils.ip import cidr_to_netmask
     from netutils.vlan import vlanconfig_to_list
 
     vlans = data.get('vlans', [])
@@ -57,6 +58,15 @@ def postprocess(data):
         named_vlans.append({"vlan_id": vlan, "name": None})
 
     data['vlans'] = sorted(named_vlans, key=lambda x: x['vlan_id'])
+
+    if interfaces := data.get("interfaces", []):
+        for interface in interfaces:
+            if mode := interface.get("mode"):
+                interface["mode"] = mode.splitlines()[-1]
+
+            if tagged_vlans := interface.get("tagged_vlans"):
+                interface["tagged_vlans"] = [int(vlan) for vlan in tagged_vlans]
+
     return data
 
 </macro>
@@ -87,10 +97,11 @@ interface {{ name | _start_ }}
   shutdown {{ enabled | set(False) }}
   management {{ management | set(True) }}
   switchport mode trunk {{ mode | set("tagged-all") }}
-  switchport access vlan {{ access_vlan | let("mode", "access") }}
-  switchport trunk native vlan {{ access_vlan | let("mode", "access") }}
+  switchport access vlan {{ access_vlan | to_int | let("mode", "access") }}
+  switchport trunk native vlan {{ access_vlan | to_int }}
   switchport trunk allowed vlan {{ tagged_vlans | unrange(rangechar='-', joinchar=',') | split(",") | joinmatches | let("mode", "tagged") }}
-  channel-group {{ lag_id }} mode {{ lacp_mode }}
+  channel-group {{ lag_id | to_int }} mode {{ lacp_mode }}
+  speed {{ speed | to_int }}
 
   <group name="ipv4*" method="table">
   ip address {{ ip }}

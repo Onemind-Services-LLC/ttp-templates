@@ -47,7 +47,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/1",
                     description="",
@@ -59,7 +71,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/2",
                     description="",
@@ -71,7 +95,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/3",
                     description="",
@@ -83,7 +119,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/4",
                     description="",
@@ -95,7 +143,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/5",
                     description="",
@@ -107,7 +167,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/6",
                     description="",
@@ -119,7 +191,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="GigabitEthernet0/7",
                     description="",
@@ -131,7 +215,19 @@ class TestCiscoASA(TestCase):
                     lag_id=1,
                     lacp_mode="active",
                     parent="Port-channel1",
-                ).model_dump(exclude={"ipv4", "lacp_max_bundle", "vlan_id", "mtu"}),
+                ).model_dump(
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
+                ),
                 ASAInterface(
                     name="Management0/0",
                     description="",
@@ -142,12 +238,8 @@ class TestCiscoASA(TestCase):
                     duplex="auto",
                     mtu=1500,
                     ipv4=[
-                        IPv4(ip="10.10.10.1", mask="255.255.255.0").model_dump(
-                            exclude={"secondary"}
-                        ),
-                        IPv4(
-                            ip="20.20.20.1", mask="255.255.255.0", secondary=True
-                        ).model_dump(),
+                        IPv4(ip="10.10.10.1/24").model_dump(exclude={"secondary"}),
+                        IPv4(ip="20.20.20.1/24", secondary=True).model_dump(),
                     ],
                 ).model_dump(
                     exclude={
@@ -156,6 +248,11 @@ class TestCiscoASA(TestCase):
                         "lag_id",
                         "parent",
                         "vlan_id",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
                     }
                 ),
                 ASAInterface(
@@ -175,6 +272,11 @@ class TestCiscoASA(TestCase):
                         "parent",
                         "vlan_id",
                         "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
                     }
                 ),
                 ASAInterface(
@@ -194,6 +296,11 @@ class TestCiscoASA(TestCase):
                         "parent",
                         "vlan_id",
                         "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
                     }
                 ),
                 ASAInterface(
@@ -213,6 +320,11 @@ class TestCiscoASA(TestCase):
                         "parent",
                         "vlan_id",
                         "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
                     }
                 ),
                 ASAInterface(
@@ -225,7 +337,19 @@ class TestCiscoASA(TestCase):
                     duplex="auto",
                     lacp_max_bundle="8",
                 ).model_dump(
-                    exclude={"ipv4", "lacp_mode", "lag_id", "parent", "vlan_id", "mtu"}
+                    exclude={
+                        "ipv4",
+                        "lacp_mode",
+                        "lag_id",
+                        "parent",
+                        "vlan_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
                 ),
                 ASAInterface(
                     name="Port-channel1.100",
@@ -238,7 +362,18 @@ class TestCiscoASA(TestCase):
                     parent="Port-channel1",
                     vlan_id=100,
                 ).model_dump(
-                    exclude={"ipv4", "lacp_max_bundle", "lacp_mode", "lag_id", "mtu"}
+                    exclude={
+                        "ipv4",
+                        "lacp_max_bundle",
+                        "lacp_mode",
+                        "lag_id",
+                        "mtu",
+                        "management",
+                        "mode",
+                        "access_vlan",
+                        "tagged_vlans",
+                        "speed",
+                    }
                 ),
             ],
         )
