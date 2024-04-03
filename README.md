@@ -5,4 +5,5 @@ This repository contains a collection of [TTP](https://github.com/dmulyalin/ttp)
 ## Templates
 
 - [Cisco ASA](ttp_templates/templates/cisco_asa_show_running_config.ttp)
+- [Cisco IOS](ttp_templates/templates/cisco_ios_show_running_config.ttp)
 - [Cisco NXOS](ttp_templates/templates/cisco_nxos_show_running_config.ttp)
