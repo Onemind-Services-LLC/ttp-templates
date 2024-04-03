@@ -72,7 +72,7 @@ ip vrf {{ name }}
 interface {{ name | _start_ }}
  description {{ description | re(".*") | default("") }}
  shutdown {{ enabled | set(False) | default(True) }}
- encapsulation dot1Q {{ vlan_id | to_int }}
+ encapsulation dot1Q {{ access_vlan | to_int | let("mode", "access") }}
  ip vrf forwarding {{ vrf }}
 
  <group name="ipv4*" method="table">

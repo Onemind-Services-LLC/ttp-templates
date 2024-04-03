@@ -51,7 +51,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -76,7 +75,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -101,7 +99,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -126,7 +123,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -151,7 +147,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -176,7 +171,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -201,7 +195,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -226,7 +219,6 @@ class TestCiscoASA(TestCase):
                     exclude={
                         "ipv4",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -255,7 +247,6 @@ class TestCiscoASA(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "parent",
-                        "vlan_id",
                         "management",
                         "mode",
                         "access_vlan",
@@ -279,7 +270,6 @@ class TestCiscoASA(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "parent",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -304,7 +294,6 @@ class TestCiscoASA(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "parent",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -329,7 +318,6 @@ class TestCiscoASA(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "parent",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -354,7 +342,6 @@ class TestCiscoASA(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "parent",
-                        "vlan_id",
                         "mtu",
                         "management",
                         "mode",
@@ -373,7 +360,8 @@ class TestCiscoASA(TestCase):
                     security_level=None,
                     duplex="auto",
                     parent="Port-channel1",
-                    vlan_id=100,
+                    access_vlan=100,
+                    mode="access",
                 ).model_dump(
                     exclude={
                         "ipv4",
@@ -382,8 +370,6 @@ class TestCiscoASA(TestCase):
                         "lag_id",
                         "mtu",
                         "management",
-                        "mode",
-                        "access_vlan",
                         "tagged_vlans",
                         "speed",
                         "vrf",
