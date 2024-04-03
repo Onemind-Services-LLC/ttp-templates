@@ -1,0 +1,36 @@
+version 15.5
+!
+hostname ios1
+!
+ip vrf VRF1
+ip vrf VRF2
+!
+ip domain name example.com
+!
+interface Tunnel1
+ description Tunnel1 ---> ISP1
+ ip address 100.100.100.10 255.255.255.254
+ ip nat inside
+ tunnel source GigabitEthernet0/0/0
+ tunnel mode ipsec ipv4
+ tunnel destination 10.10.10.10
+ tunnel protection ipsec profile TUN1
+interface GigabitEthernet0/0/0
+ ip address 200.200.200.200 255.255.255.248
+ ip nat outside
+ ip access-group BLOCK-ATTACK in
+ load-interval 30
+ negotiation auto
+interface GigabitEthernet0/0/1
+ description LAN
+ no ip address
+ ip nat inside
+ negotiation auto
+ shutdown
+interface GigabitEthernet0/0/1.10
+ encapsulation dot1Q 10
+ ip vrf forwarding VRF1
+ ip address 10.10.10.1 255.255.255.0
+ ip address 20.20.20.1 255.255.255.0 secondary
+ ip nat inside
+!
