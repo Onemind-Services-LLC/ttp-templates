@@ -12,7 +12,7 @@ with open(os.path.join(this_directory, "requirements.txt"), encoding="utf-8") as
 
 setup(
     name="ttp-templates",
-    version="0.0.1",
+    version="0.0.9",
     description="TTP templates collection",
     long_description=long_description,
     long_description_content_type="text/markdown",

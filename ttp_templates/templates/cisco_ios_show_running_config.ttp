@@ -1,0 +1,88 @@
+<template name="cisco_nxos_show_running_config" results="per_template">
+<doc>
+Template to parse Cisco NXOS configuration and produce data structure that
+is easy to work with to import data into NetBox.
+
+This template requires output from "show running-config" command on Cisco ASA.
+</doc>
+
+<input>
+commands = ["show running-config"]
+</input>
+
+<macro>
+def add_interface_type(data):
+    data['type'] = 'other'
+    if any(i in data['name'].lower() for i in ['.', 'loopback', 'tunnel', 'vlan']):
+        data['type'] = 'virtual'
+    elif 'nve' in data['name'].lower():
+        data['type'] = 'bridge'
+    elif 'port-channel' in data['name'].lower():
+        data['type'] = 'lag'
+
+    return data
+
+def add_parent_interface(data):
+    if "lag_id" in data:
+        data['parent'] = f"Port-channel{data['lag_id']}"
+    elif "." in data['name']:
+        data['parent'] = data['name'].split(".")[0]
+
+    return data
+
+def fix_port_channel_name(data):
+    if "port-channel" in data['name']:
+        data['name'] = data['name'].replace("port-channel", "Port-channel")
+    return data
+
+def postprocess(data):
+    from netutils.ip import netmask_to_cidr
+
+    if interfaces := data.get("interfaces", []):
+        for interface in interfaces:
+            for ipv4 in interface.get("ipv4", []):
+                ipv4["ip"] = f'{ipv4["ip"]}/{netmask_to_cidr(ipv4["mask"])}'
+                del ipv4["mask"]
+
+    return data
+
+</macro>
+
+## -----------------------------------------------------------
+## Global configuration facts
+## -----------------------------------------------------------
+<group name="facts**" method="table">
+version {{ os_version }}
+hostname {{ hostname }}
+ip domain name {{ domain_name }}
+</group>
+
+## -----------------------------------------------------------
+## VRF configuration
+## -----------------------------------------------------------
+<group name="vrf*" method="table">
+ip vrf {{ name }}
+</group>
+
+
+## -----------------------------------------------------------
+## Interface configuration
+## -----------------------------------------------------------
+<group name="interfaces*" functions="contains('name') | macro('add_interface_type') | macro('add_parent_interface') | macro('fix_port_channel_name')">
+interface {{ name | _start_ }}
+ description {{ description | re(".*") | default("") }}
+ shutdown {{ enabled | set(False) | default(True) }}
+ encapsulation dot1Q {{ vlan_id | to_int }}
+ ip vrf forwarding {{ vrf }}
+
+ <group name="ipv4*" method="table">
+ ip address {{ ip | IP }} {{ mask }}
+ ip address {{ ip | IP | let("secondary", True) }} {{ mask }} secondary
+ </group>
+
+{{ _end_ }}
+</group>
+
+<output name="postprocess" macro="postprocess"/>
+
+</template>

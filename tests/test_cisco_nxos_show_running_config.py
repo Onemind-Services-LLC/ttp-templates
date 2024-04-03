@@ -67,6 +67,7 @@ class TestCiscoNXOS(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -90,6 +91,7 @@ class TestCiscoNXOS(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -115,6 +117,7 @@ class TestCiscoNXOS(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -138,6 +141,7 @@ class TestCiscoNXOS(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -161,6 +165,7 @@ class TestCiscoNXOS(TestCase):
                         "lag_id",
                         "lacp_mode",
                         "lacp_max_bundle",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -184,6 +189,7 @@ class TestCiscoNXOS(TestCase):
                         "lag_id",
                         "lacp_mode",
                         "lacp_max_bundle",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -207,6 +213,7 @@ class TestCiscoNXOS(TestCase):
                         "management",
                         "access_vlan",
                         "speed",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -233,6 +240,7 @@ class TestCiscoNXOS(TestCase):
                         "lacp_mode",
                         "lacp_max_bundle",
                         "mode",
+                        "vrf",
                     }
                 ),
                 DeviceInterface(
@@ -256,6 +264,7 @@ class TestCiscoNXOS(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
             ],

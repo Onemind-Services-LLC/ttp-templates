@@ -9,6 +9,7 @@ __all__ = [
     "DeviceFacts",
     "DeviceInterface",
     "DeviceVlan",
+    "DeviceVRF",
     "IPv4",
 ]
 
@@ -49,6 +50,7 @@ class DeviceInterface(BaseModel):
     access_vlan: Optional[int] = None
     tagged_vlans: Optional[list[int]] = None
     speed: Optional[int] = None
+    vrf: Optional[str] = None
 
 
 class ASAInterface(DeviceInterface):
@@ -64,3 +66,7 @@ class DeviceAclStandard(BaseModel):
 class DeviceVlan(BaseModel):
     vlan_id: int
     name: Optional[str] = None
+
+
+class DeviceVRF(BaseModel):
+    name: str
