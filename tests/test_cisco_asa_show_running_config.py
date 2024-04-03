@@ -58,6 +58,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -82,6 +83,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -106,6 +108,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -130,6 +133,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -154,6 +158,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -178,6 +183,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -202,6 +208,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -226,6 +233,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -253,6 +261,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -277,6 +286,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -301,6 +311,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -325,6 +336,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -349,6 +361,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
                 ASAInterface(
@@ -373,6 +386,7 @@ class TestCiscoASA(TestCase):
                         "access_vlan",
                         "tagged_vlans",
                         "speed",
+                        "vrf",
                     }
                 ),
             ],
