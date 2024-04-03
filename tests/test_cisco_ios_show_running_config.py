@@ -64,7 +64,6 @@ class TestCiscoIOS(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "vrf",
                     }
                 ),
@@ -89,7 +88,6 @@ class TestCiscoIOS(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "vrf",
                     }
                 ),
@@ -112,7 +110,6 @@ class TestCiscoIOS(TestCase):
                         "lacp_mode",
                         "lag_id",
                         "lacp_max_bundle",
-                        "vlan_id",
                         "vrf",
                         "ipv4",
                     }
@@ -122,7 +119,8 @@ class TestCiscoIOS(TestCase):
                     type="virtual",
                     enabled=True,
                     parent="GigabitEthernet0/0/1",
-                    vlan_id=10,
+                    access_vlan=10,
+                    mode="access",
                     vrf="VRF1",
                     ipv4=[
                         IPv4(ip="10.10.10.1/24").model_dump(exclude={"secondary"}),
@@ -133,8 +131,6 @@ class TestCiscoIOS(TestCase):
                         "label",
                         "mtu",
                         "management",
-                        "mode",
-                        "access_vlan",
                         "tagged_vlans",
                         "speed",
                         "duplex",

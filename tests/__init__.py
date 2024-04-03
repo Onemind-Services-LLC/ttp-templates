@@ -41,7 +41,6 @@ class DeviceInterface(BaseModel):
     lag_id: Optional[int] = None
     lacp_mode: Optional[str] = ""
     lacp_max_bundle: Optional[str] = ""
-    vlan_id: Optional[int] = None
     ipv4: Optional[list[dict]] = None
     parent: Optional[str] = ""
     mtu: Optional[int] = None

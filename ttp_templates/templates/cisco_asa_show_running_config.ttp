@@ -93,7 +93,7 @@ interface {{ name | _start_ }}
  no security-level {{ security_level | default(None) }}
  channel-group {{ lag_id | to_int }} mode {{ lacp_mode }}
  lacp max-bundle {{ lacp_max_bundle }}
- vlan {{ vlan_id | to_int }}
+ vlan {{ access_vlan | to_int | let("mode", "access") }}
 
  <group name="ipv4*" method="table">
  ip address {{ ip | IP }} {{ mask }}
