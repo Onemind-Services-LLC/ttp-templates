@@ -52,7 +52,8 @@ def postprocess(data):
             unnamed_vlans.extend(vlan_ids)
 
     for vlan in named_vlans:
-        unnamed_vlans.remove(vlan['vlan_id'])
+        if vlan['vlan_id'] in unnamed_vlans:
+            unnamed_vlans.remove(vlan['vlan_id'])
 
     for vlan in unnamed_vlans:
         named_vlans.append({"vlan_id": vlan, "name": None})
